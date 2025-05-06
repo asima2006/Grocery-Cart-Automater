@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { addProductsToCart } from "@/services/grocery-site";
 import type { Product, CartSummary } from "@/services/grocery-site";
+import { requestOtpViaPlaywright, submitOtpViaPlaywright } from "@/lib/blinkit";
 
 // Schema Definitions
 const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"); // Basic E.164 format check
@@ -15,41 +16,36 @@ const productSchema = z.object({
 const productsSchema = z.array(productSchema);
 
 // Types for return values
-export type LoginResult = { success: true; sessionId: string } | { success: false; error: string };
+export type LoginResult = { success: true; session: object } | { success: false; error: string };
 export type SubmitOtpResult = { success: true } | { success: false; error: string };
 export type AddProductsResult = { success: true; cartSummary: CartSummary } | { success: false; error: string };
 
 // --- Placeholder Functions for Backend Logic ---
 // Simulate requesting OTP
 async function requestOtpFromBackend(phoneNumber: string): Promise<LoginResult> {
-  console.log(`Simulating OTP request for: ${phoneNumber}`);
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  if (typeof phoneNumber !== 'string' || !phoneNumber.trim()) {
+    return { success: false, error: 'Phone number is required.' };
+  }
 
-  // In a real scenario, this would call the Playwright backend
-  // For now, assume success and return a dummy session ID
-  const dummySessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2)}`;
-  console.log(`Simulated OTP sent. Session ID: ${dummySessionId}`);
-  return { success: true, sessionId: dummySessionId };
-  // Example failure:
-  // return { success: false, error: "Failed to initiate login process." };
+  // Delegate to your Playwright logic
+  const result = await requestOtpViaPlaywright(phoneNumber.trim());
+
+  if (!result.success) {
+    return { success: false, error: result.error };
+  }
+
+  // On success, return the generated session ID
+  return {
+    success: true,
+    session: result.session,
+  };
 }
 
 // Simulate submitting OTP
 async function submitOtpToBackend(sessionId: string, otp: string): Promise<SubmitOtpResult> {
-  console.log(`Simulating OTP submission for Session ID: ${sessionId} with OTP: ${otp}`);
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  // In a real scenario, this would call the Playwright backend
-  // For now, assume success if OTP is '123456'
-  if (otp === '123456') {
-    console.log(`Simulated OTP verification successful for Session ID: ${sessionId}`);
-    return { success: true };
-  } else {
-    console.log(`Simulated OTP verification failed for Session ID: ${sessionId}`);
-    return { success: false, error: "Invalid OTP." };
-  }
+  const result = await submitOtpViaPlaywright(sessionId, otp);
+  if (!result.success) throw new Error(result.error);
+  return { success: true };
 }
 
 // Use the existing service for adding products
