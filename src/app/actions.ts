@@ -15,9 +15,9 @@ const productSchema = z.object({
 const productsSchema = z.array(productSchema);
 
 // Types for return values
-type LoginResult = { success: true; sessionId: string } | { success: false; error: string };
-type SubmitOtpResult = { success: true } | { success: false; error: string };
-type AddProductsResult = { success: true; cartSummary: CartSummary } | { success: false; error: string };
+export type LoginResult = { success: true; sessionId: string } | { success: false; error: string };
+export type SubmitOtpResult = { success: true } | { success: false; error: string };
+export type AddProductsResult = { success: true; cartSummary: CartSummary } | { success: false; error: string };
 
 // --- Placeholder Functions for Backend Logic ---
 // Simulate requesting OTP
