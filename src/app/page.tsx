@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState } from 'react'; // Corrected: useActionState is from 'react'
+import { useFormStatus } from 'react-dom'; // Corrected: useFormStatus is from 'react-dom'
 import { handleLogin, handleSubmitOtp, handleAddProducts } from './actions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +14,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableCap
 import { Loader2, Phone, KeyRound, ShoppingCart, CheckCircle, AlertCircle } from 'lucide-react';
 import type { Product, CartSummary } from "@/services/grocery-site";
 
-// Initial states for useFormState
+// Initial states for useActionState
 const initialLoginState = { success: false, error: null, sessionId: null };
 const initialOtpState = { success: false, error: null };
 const initialAddProductsState = { success: false, error: null, cartSummary: null };
@@ -36,9 +37,9 @@ function SubmitButton({ children, pendingText }: { children: React.ReactNode, pe
 }
 
 export default function Home() {
-  const [loginState, loginFormAction] = useFormState(handleLogin, initialLoginState);
-  const [otpState, otpFormAction] = useFormState(handleSubmitOtp, initialOtpState);
-  const [addProductsState, addProductsFormAction] = useFormState(handleAddProducts, initialAddProductsState);
+  const [loginState, loginFormAction] = useActionState(handleLogin, initialLoginState);
+  const [otpState, otpFormAction] = useActionState(handleSubmitOtp, initialOtpState);
+  const [addProductsState, addProductsFormAction] = useActionState(handleAddProducts, initialAddProductsState);
 
   const [currentSessionId, setCurrentSessionId] = React.useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
