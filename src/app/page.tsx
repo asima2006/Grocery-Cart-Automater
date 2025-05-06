@@ -1,7 +1,6 @@
 'use client';
 
-import * as React from 'react';
-import { useActionState } from 'react'; // Corrected: useActionState is from 'react'
+import React, { useActionState, useEffect, useState } from 'react'; // Corrected: useActionState is from 'react'
 import { useFormStatus } from 'react-dom'; // Corrected: useFormStatus is from 'react-dom'
 import { handleLogin, handleSubmitOtp, handleAddProducts } from './actions';
 import { Button } from '@/components/ui/button';
@@ -41,19 +40,19 @@ export default function Home() {
   const [otpState, otpFormAction] = useActionState(handleSubmitOtp, initialOtpState);
   const [addProductsState, addProductsFormAction] = useActionState(handleAddProducts, initialAddProductsState);
 
-  const [currentSessionId, setCurrentSessionId] = React.useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [productsJson, setProductsJson] = React.useState<string>('');
-  const [productInputError, setProductInputError] = React.useState<string | null>(null);
+  const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [productsJson, setProductsJson] = useState<string>('');
+  const [productInputError, setProductInputError] = useState<string | null>(null);
 
   // Update state based on form results
-  React.useEffect(() => {
+  useEffect(() => {
     if (loginState?.success && loginState.sessionId) {
       setCurrentSessionId(loginState.sessionId);
     }
   }, [loginState]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (otpState?.success) {
       setIsAuthenticated(true);
     }
