@@ -1,13 +1,13 @@
 "use server";
 
 import { z } from "zod";
-import { addProductsToCart } from "@/services/grocery-site";
 import type { Product, CartSummary } from "@/services/grocery-site";
-import { requestOtpViaPlaywright, submitOtpViaPlaywright } from "@/lib/blinkit";
+import { addProductsToCartViaPlaywright, requestOtpViaPlaywright, submitOtpViaPlaywright } from "@/lib/blinkit";
+import { log } from "console";
 
 // Schema Definitions
-const phoneSchema = z.string().regex(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"); // Basic E.164 format check
-const otpSchema = z.string().length(6, "OTP must be 6 digits");
+const phoneSchema = z.string().regex(/^[6-9]\d{9}$/, "Invalid Indian phone number");
+const otpSchema = z.string().length(4, "OTP must be 4 digits");
 const sessionIdSchema = z.string().min(1, "Session ID is required");
 const productSchema = z.object({
   url: z.string().url("Invalid URL"),
@@ -16,7 +16,9 @@ const productSchema = z.object({
 const productsSchema = z.array(productSchema);
 
 // Types for return values
-export type LoginResult = { success: true; session: object } | { success: false; error: string };
+export type LoginResult =
+  { success: true; session: { sessionId: string; cookies: string; domSnapshot: string; url: string } } |
+  { success: false; error: string }; // Error case
 export type SubmitOtpResult = { success: true } | { success: false; error: string };
 export type AddProductsResult = { success: true; cartSummary: CartSummary } | { success: false; error: string };
 
@@ -29,6 +31,7 @@ async function requestOtpFromBackend(phoneNumber: string): Promise<LoginResult> 
 
   // Delegate to your Playwright logic
   const result = await requestOtpViaPlaywright(phoneNumber.trim());
+  log("OTP request result:", result.success);
 
   if (!result.success) {
     return { success: false, error: result.error };
@@ -50,21 +53,11 @@ async function submitOtpToBackend(sessionId: string, otp: string): Promise<Submi
 
 // Use the existing service for adding products
 async function addProductsViaBackend(sessionId: string, products: Product[]): Promise<AddProductsResult> {
-  console.log(`Simulating adding products for Session ID: ${sessionId}`, products);
-  // Simulate network delay before calling the service
-  await new Promise(resolve => setTimeout(resolve, 1500));
-
-  try {
-    // In a real scenario, this would call the Playwright backend, which might then call addProductsToCart or similar logic.
-    // Here, we directly call the placeholder service.
-    const cartSummary = await addProductsToCart(sessionId, products);
-    console.log(`Simulated product addition successful. Cart Summary:`, cartSummary);
-    return { success: true, cartSummary };
-  } catch (error) {
-    console.error("Error during product addition simulation:", error);
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred while adding products.";
-    return { success: false, error: errorMessage };
+  const cartSummary = await addProductsToCartViaPlaywright(sessionId, products);
+  if (!cartSummary) {
+    return { success: false, error: "Failed to add products to cart." };
   }
+  return cartSummary;
 }
 
 // --- Server Actions ---
@@ -122,7 +115,6 @@ export async function handleAddProducts(prevState: any, formData: FormData): Pro
     const validation = productsSchema.safeParse(parsedProducts);
     if (!validation.success) {
       console.error("Product validation error:", validation.error.errors);
-      // Provide a more user-friendly error message
       const errorMessages = validation.error.errors.map((e, i) => `Product ${i + 1}: ${e.message} (at ${e.path.join('.')})`).join('\n');
       return { success: false, error: `Invalid product data:\n${errorMessages}` };
     }

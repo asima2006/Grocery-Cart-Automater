@@ -48,13 +48,13 @@ export default function Home() {
 
   // Update state based on form results
   useEffect(() => {
-    if (loginState.success && loginState.sessionId) { // Guarded by loginState.success
-      setCurrentSessionId(loginState.sessionId);
+    if (loginState?.success && loginState.session?.sessionId) { // Add null check for loginState
+      setCurrentSessionId(loginState.session.sessionId);
     }
   }, [loginState]);
 
   useEffect(() => {
-    if (otpState.success) { // Guarded by otpState.success
+    if (otpState.success) { 
       setIsAuthenticated(true);
     }
   }, [otpState]);
@@ -244,13 +244,13 @@ export default function Home() {
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-center">{item.quantity}</TableCell>
-                    <TableCell className="text-right">${item.price.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">${(item.price * item.quantity).toFixed(2)}</TableCell>
+                    <TableCell className="text-right">₹{item.price.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">₹{(item.price * item.quantity).toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
               <TableCaption className="text-right font-bold text-lg text-foreground pr-4 py-2">
-                Total Price: <span className="text-accent">${addProductsState.cartSummary.totalPrice.toFixed(2)}</span>
+                Total Price: <span className="text-accent">₹{addProductsState.cartSummary.totalPrice.toFixed(2)}</span>
               </TableCaption>
             </Table>
           </CardContent>

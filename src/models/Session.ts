@@ -24,6 +24,7 @@ const SessionSchema: Schema<ISession> = new Schema(
     },
     phoneNumber: {
       type: String,
+      sparse: true,
     },
     otp: {
       type: String,

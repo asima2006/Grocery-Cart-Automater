@@ -44,31 +44,31 @@ export interface CartSummary {
   totalPrice: number;
 }
 
-/**
- * Asynchronously adds products to the cart and scrapes the pricing information.
- * @param sessionId The session ID of the logged-in user.
- * @param products An array of products to add to the cart.
- * @returns A promise that resolves to a CartSummary object containing the cart items and total price.
- */
-export async function addProductsToCart(
-  sessionId: string,
-  products: Product[]
-): Promise<CartSummary> {
-  // TODO: Implement this by calling an API or using Playwright.
+// /**
+//  * Asynchronously adds products to the cart and scrapes the pricing information.
+//  * @param sessionId The session ID of the logged-in user.
+//  * @param products An array of products to add to the cart.
+//  * @returns A promise that resolves to a CartSummary object containing the cart items and total price.
+//  */
+// export async function addProductsToCart(
+//   sessionId: string,
+//   products: Product[]
+// ): Promise<CartSummary> {
+//   // TODO: Implement this by calling an API or using Playwright.
 
-  return {
-    items: [
-      {
-        name: 'Example Product 1',
-        quantity: 2,
-        price: 3.99,
-      },
-      {
-        name: 'Example Product 2',
-        quantity: 1,
-        price: 5.49,
-      },
-    ],
-    totalPrice: 13.47,
-  };
-}
+//   return {
+//     items: [
+//       {
+//         name: 'Example Product 1',
+//         quantity: 2,
+//         price: 3.99,
+//       },
+//       {
+//         name: 'Example Product 2',
+//         quantity: 1,
+//         price: 5.49,
+//       },
+//     ],
+//     totalPrice: 13.47,
+//   };
+// }

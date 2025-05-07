@@ -26,9 +26,15 @@ const saveSession = async (sessionId: string, data: SessionData): Promise<void> 
 
   // For MongoDB, use findOneAndUpdate with upsert:true
   try {
+    // Use $set to ensure partial updates without replacing the whole document.
+    // This ensures that if `data.cart` is provided, it's updated,
+    // along with any other fields in `data`.
+    // The sessionId is included in $set to ensure it's written, especially for upserts.
+    const updatePayload = { $set: { ...data, sessionId: sessionId } };
+
     await Session.findOneAndUpdate(
       { sessionId: sessionId }, // Query condition: find by our custom sessionId
-      { ...data, sessionId: sessionId }, // Data to insert/update (ensure sessionId is part of the doc)
+      updatePayload,             // The update operations to apply
       { upsert: true, new: true, setDefaultsOnInsert: true } // Options
     );
     console.log(`Session ${sessionId} saved/updated in MongoDB.`);

@@ -1,14 +1,14 @@
-import type {NextConfig} from 'next';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
   experimental: {
-    serverActions: {}, // Changed to an empty object to satisfy the type
-    allowedDevOrigins: [
-      'https://9003-idx-studio-1746525270584.cluster-fdkw7vjj7bgguspe3fbbc25tra.cloudworkstations.dev', // Exact match
-      'local-origin.dev',
-      '*.local-origin.dev'
-    ]
+    serverActions: {
+      allowedOrigins: [
+        'shiny-potato-pvj4r7jvwqg37wv9-9003.app.github.dev', // Add your codespace host
+        'localhost:9003'
+      ]
+    },
   },
   typescript: {
     ignoreBuildErrors: true,
