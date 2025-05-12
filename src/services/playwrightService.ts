@@ -8,7 +8,7 @@ interface LaunchResult {
 }
 
 export const launchBrowser = async (): Promise<LaunchResult> => {
-    const browser = await chromium.launch({ headless: false }); // or true if you don't want GUI
+    const browser = await chromium.launch({ headless: true }); // or true if you don't want GUI
     const page = await browser.newPage();
     return { browser, page };
 };
